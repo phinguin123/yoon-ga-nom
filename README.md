@@ -75,14 +75,31 @@ All responses are wrapped as `{ success: true, data }` or `{ success: false, err
 | Method | Path | Description |
 |---|---|---|
 | GET | `/api/health` | Health check |
-| GET | `/api/type-challenge?type=&search=` | List/filter challenge videos |
-| GET | `/api/type-challenge/:id` | Get one video |
+| GET | `/api/type-challenge?type=&search=` | List/filter raw episodes |
+| GET | `/api/type-challenge/:id` | Get one episode |
+| GET | `/api/type-challenge/series?type=&search=` | List challenge **series** (episodes grouped + aggregated) |
+| GET | `/api/type-challenge/series/:key` | Get one series with all its episodes |
 | GET | `/api/roulette/presets` | List roulette presets |
 | GET | `/api/roulette/presets/:id` | Get one preset |
 | GET | `/api/schedule?type=` | List schedule events |
 | GET | `/api/stream-log` | List stream logs |
 | GET | `/api/stream-log/:id` | Get one stream log with entries |
 | GET | `/api/dyang` | List Dyang collab timeline events |
+
+### Type Challenge Archive: catalog + live YouTube data
+
+Each type challenge is a numbered series of episodes (`전기타입 하트골드 #1, #2, ...`), always a single Pokémon type. This is modeled as two separate concerns in `backend/src/data/typeChallengeVideos.ts`:
+
+- **Curated catalog** (hand-maintained): which video ID belongs to which type/series/episode number, and whether the series is `"ongoing"` or `"completed"`. YouTube has no way of knowing this, so it lives in our own data layer (swap the array for a real DB/CMS later).
+- **Live stats** (`backend/src/services/youtube.service.ts`): title, thumbnail, publish date, view count, and duration are fetched from the official **YouTube Data API v3** and merged over the catalog's placeholder values, with an in-memory 1-hour cache to stay well under the free quota.
+
+Aggregates like `totalViews` and `latestPublishedAt` on a series are computed **server-side** (`backend/src/lib/groupSeries.ts`) from this merged, real data — the frontend never recomputes them, it just renders whatever `/api/type-challenge/series` returns via a `useChallengeSeriesList()` React Query hook.
+
+If `YOUTUBE_API_KEY` isn't set (see `backend/.env.example`), the app falls back to the catalog's static placeholder numbers instead of crashing — useful for local dev/demos. To go live:
+
+1. Enable "YouTube Data API v3" for a project in the [Google Cloud Console](https://console.cloud.google.com/apis/credentials) and create an API key.
+2. Set `YOUTUBE_API_KEY=...` in `backend/.env`.
+3. Replace the placeholder `youtubeId` values in the catalog with real video IDs from the channel.
 
 ## Design System Notes
 

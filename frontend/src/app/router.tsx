@@ -4,6 +4,7 @@ import { MainLayout } from "@/components/layout/MainLayout";
 
 const HomePage = lazy(() => import("@/pages/HomePage"));
 const TypeChallengePage = lazy(() => import("@/pages/TypeChallengePage"));
+const TypeChallengeSeriesPage = lazy(() => import("@/pages/TypeChallengeSeriesPage"));
 const RoulettePage = lazy(() => import("@/pages/RoulettePage"));
 const SchedulePage = lazy(() => import("@/pages/SchedulePage"));
 const StreamLogPage = lazy(() => import("@/pages/StreamLogPage"));
@@ -29,6 +30,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: withSuspense(<HomePage />) },
       { path: "type-challenge", element: withSuspense(<TypeChallengePage />) },
+      { path: "type-challenge/:seriesKey", element: withSuspense(<TypeChallengeSeriesPage />) },
       { path: "roulette", element: withSuspense(<RoulettePage />) },
       { path: "schedule", element: withSuspense(<SchedulePage />) },
       { path: "stream-log", element: withSuspense(<StreamLogPage />) },

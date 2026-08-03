@@ -7,17 +7,49 @@ export type PokemonType =
   | "fighting" | "poison" | "ground" | "flying" | "psychic" | "bug"
   | "rock" | "ghost" | "dragon" | "dark" | "steel" | "fairy";
 
+/** Whether a challenge series has wrapped up or is still being worked on. */
+export type ChallengeStatus = "ongoing" | "completed";
+
+/**
+ * A single uploaded episode. Type challenges are always a single Pokémon
+ * type and are almost always a numbered series (e.g. "전기타입 하트골드
+ * #1", "#2", "#3"...) rather than one-off videos, so every episode carries
+ * a `seriesTitle` shared with its siblings plus its own `episodeNumber`.
+ *
+ * `result` is the outcome of that specific episode (every uploaded video
+ * already happened, so it's always a definite clear/fail — never
+ * "in progress"). Whether the *series as a whole* is still ongoing lives
+ * separately on `seriesStatus`, since a challenge can keep going after a
+ * single failed episode.
+ */
 export interface TypeChallengeVideo {
   id: string;
+  seriesTitle: string;
+  seriesStatus: ChallengeStatus;
+  episodeNumber: number;
   title: string;
   youtubeId: string;
   thumbnailUrl: string;
-  types: PokemonType[];
-  result: "clear" | "fail" | "in-progress";
+  type: PokemonType;
+  result: "clear" | "fail";
   durationSeconds: number;
   publishedAt: string; // ISO date
   views: number;
   tags: string[];
+}
+
+/** A group of episodes that share the same Pokémon type + series title. */
+export interface ChallengeSeries {
+  key: string;
+  type: PokemonType;
+  seriesTitle: string;
+  status: ChallengeStatus;
+  episodes: TypeChallengeVideo[];
+  episodeCount: number;
+  totalViews: number;
+  latestPublishedAt: string;
+  /** The final clear/fail verdict, or null while the series is still ongoing. */
+  finalResult: "clear" | "fail" | null;
 }
 
 export interface RoulettePreset {

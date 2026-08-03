@@ -1,8 +1,6 @@
 import { Outlet, useLocation } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
-import { PageTransition } from "./PageTransition";
 import { cn } from "@/lib/utils";
 
 /**
@@ -23,11 +21,7 @@ export function MainLayout() {
     >
       <Navbar />
       <main className="flex-1">
-        <AnimatePresence mode="wait">
-          <PageTransition key={location.pathname}>
-            <Outlet />
-          </PageTransition>
-        </AnimatePresence>
+        <Outlet />
       </main>
       <Footer />
     </div>

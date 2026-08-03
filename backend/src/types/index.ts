@@ -7,17 +7,40 @@ export type PokemonType =
   | "fighting" | "poison" | "ground" | "flying" | "psychic" | "bug"
   | "rock" | "ghost" | "dragon" | "dark" | "steel" | "fairy";
 
+export type ChallengeStatus = "ongoing" | "completed";
+
+/**
+ * `result` is the outcome of that specific uploaded episode (always a
+ * definite clear/fail, never "in progress" — the video already happened).
+ * `seriesStatus` tracks whether the overall numbered challenge has wrapped
+ * up yet, independent of any single episode's result.
+ */
 export interface TypeChallengeVideo {
   id: string;
+  seriesTitle: string;
+  seriesStatus: ChallengeStatus;
+  episodeNumber: number;
   title: string;
   youtubeId: string;
   thumbnailUrl: string;
-  types: PokemonType[];
-  result: "clear" | "fail" | "in-progress";
+  type: PokemonType;
+  result: "clear" | "fail";
   durationSeconds: number;
   publishedAt: string;
   views: number;
   tags: string[];
+}
+
+export interface ChallengeSeries {
+  key: string;
+  type: PokemonType;
+  seriesTitle: string;
+  status: ChallengeStatus;
+  episodes: TypeChallengeVideo[];
+  episodeCount: number;
+  totalViews: number;
+  latestPublishedAt: string;
+  finalResult: "clear" | "fail" | null;
 }
 
 export interface RoulettePreset {
