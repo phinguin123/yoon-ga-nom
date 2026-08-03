@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
+import { RequireAdmin } from "@/features/admin/components/RequireAdmin";
 
 const HomePage = lazy(() => import("@/pages/HomePage"));
 const TypeChallengePage = lazy(() => import("@/pages/TypeChallengePage"));
@@ -9,6 +10,8 @@ const RoulettePage = lazy(() => import("@/pages/RoulettePage"));
 const SchedulePage = lazy(() => import("@/pages/SchedulePage"));
 const StreamLogPage = lazy(() => import("@/pages/StreamLogPage"));
 const DyangPage = lazy(() => import("@/pages/DyangPage"));
+const AdminLoginPage = lazy(() => import("@/pages/AdminLoginPage"));
+const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
 const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 
 function withSuspense(element: React.ReactNode) {
@@ -35,6 +38,12 @@ export const router = createBrowserRouter([
       { path: "schedule", element: withSuspense(<SchedulePage />) },
       { path: "stream-log", element: withSuspense(<StreamLogPage />) },
       { path: "dyang", element: withSuspense(<DyangPage />) },
+      { path: "admin/login", element: withSuspense(<AdminLoginPage />) },
+      {
+        path: "admin",
+        element: <RequireAdmin />,
+        children: [{ index: true, element: withSuspense(<AdminDashboardPage />) }],
+      },
       { path: "*", element: withSuspense(<NotFoundPage />) },
     ],
   },

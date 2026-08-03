@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Play, Eye, Film, CheckCircle2, XCircle, Clock } from "lucide-react";
+import { Play, Eye, Film, CheckCircle2, Clock } from "lucide-react";
 import type { ChallengeSeries } from "@/types";
 import { POKEMON_TYPE_META } from "../pokemonTypeMeta";
 import { formatViews, cn } from "@/lib/utils";
@@ -8,7 +8,6 @@ import { formatViews, cn } from "@/lib/utils";
 const STATUS_META = {
   ongoing: { icon: Clock, label: "진행중", className: "bg-amber-100 text-amber-700" },
   clear: { icon: CheckCircle2, label: "클리어", className: "bg-emerald-100 text-emerald-700" },
-  fail: { icon: XCircle, label: "실패", className: "bg-rose-100 text-rose-700" },
 } as const;
 
 interface SeriesCardProps {
@@ -19,12 +18,12 @@ interface SeriesCardProps {
  * Represents an entire numbered challenge series (e.g. "전기타입 하트골드"),
  * not a single video. Clicking it drills into `/type-challenge/:key` to see
  * every episode. The corner badge shows "진행중" while the series is still
- * ongoing, or the final clear/fail verdict once it's wrapped up.
+ * ongoing, or "클리어" once it's wrapped up.
  */
 export function SeriesCard({ series }: SeriesCardProps) {
   const latestEpisode = series.episodes[series.episodes.length - 1];
   const typeMeta = POKEMON_TYPE_META[series.type];
-  const status = series.status === "ongoing" ? STATUS_META.ongoing : STATUS_META[series.finalResult ?? "clear"];
+  const status = series.status === "completed" ? STATUS_META.clear : STATUS_META.ongoing;
   const StatusIcon = status.icon;
 
   return (

@@ -16,11 +16,10 @@ export type ChallengeStatus = "ongoing" | "completed";
  * #1", "#2", "#3"...) rather than one-off videos, so every episode carries
  * a `seriesTitle` shared with its siblings plus its own `episodeNumber`.
  *
- * `result` is the outcome of that specific episode (every uploaded video
- * already happened, so it's always a definite clear/fail — never
- * "in progress"). Whether the *series as a whole* is still ongoing lives
- * separately on `seriesStatus`, since a challenge can keep going after a
- * single failed episode.
+ * `result` is this specific episode's outcome: either the type was cleared
+ * in this video ("clear"), or the run continues into a future episode
+ * ("in-progress"). Whether the *series as a whole* is still ongoing lives
+ * separately on `seriesStatus`.
  */
 export interface TypeChallengeVideo {
   id: string;
@@ -31,7 +30,7 @@ export interface TypeChallengeVideo {
   youtubeId: string;
   thumbnailUrl: string;
   type: PokemonType;
-  result: "clear" | "fail";
+  result: "clear" | "in-progress";
   durationSeconds: number;
   publishedAt: string; // ISO date
   views: number;
@@ -48,8 +47,8 @@ export interface ChallengeSeries {
   episodeCount: number;
   totalViews: number;
   latestPublishedAt: string;
-  /** The final clear/fail verdict, or null while the series is still ongoing. */
-  finalResult: "clear" | "fail" | null;
+  /** "clear" once the series is completed and its final episode cleared, otherwise null. */
+  finalResult: "clear" | null;
 }
 
 export interface RoulettePreset {

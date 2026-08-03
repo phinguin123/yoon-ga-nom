@@ -21,7 +21,7 @@ export function groupVideosBySeries(videos: TypeChallengeVideo[]): ChallengeSeri
       episodeCount: sorted.length,
       totalViews: sorted.reduce((sum, ep) => sum + ep.views, 0),
       latestPublishedAt: latest.publishedAt,
-      finalResult: latest.seriesStatus === "completed" ? latest.result : null,
+      finalResult: latest.seriesStatus === "completed" && latest.result === "clear" ? "clear" : null,
     } satisfies ChallengeSeries;
   });
 }

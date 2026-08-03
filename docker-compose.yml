@@ -26,6 +26,10 @@ services:
       # Frontend and API are served under the same domain via Caddy, so this
       # is only a safety net for direct/cross-origin requests to the API.
       CORS_ORIGIN: https://example.com
+    volumes:
+      # Persists the SQLite database (admin-managed episodes) across
+      # container rebuilds/restarts. Back this volume up separately.
+      - backend_data:/app/backend/data
     expose:
       - "4000"
     networks:
@@ -56,3 +60,4 @@ networks:
 volumes:
   caddy_data:
   caddy_config:
+  backend_data:

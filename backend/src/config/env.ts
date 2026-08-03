@@ -15,6 +15,9 @@ export const env = {
   // Optional: without this, live view counts/durations/thumbnails fall back
   // to the static placeholder values in src/data/typeChallengeVideos.ts.
   youtubeApiKey: process.env.YOUTUBE_API_KEY,
+  // Admin auth — see backend/README or `npm run hash-password` to generate.
+  adminPasswordHash: process.env.ADMIN_PASSWORD_HASH,
+  jwtSecret: process.env.JWT_SECRET,
 };
 
 export const isProduction = env.nodeEnv === "production";

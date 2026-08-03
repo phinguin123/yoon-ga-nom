@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
-import { Play, Eye, CheckCircle2, XCircle } from "lucide-react";
+import { Play, Eye, CheckCircle2, Clock } from "lucide-react";
 import type { TypeChallengeVideo } from "@/types";
 import { POKEMON_TYPE_META } from "../pokemonTypeMeta";
 import { formatDuration, formatViews, cn } from "@/lib/utils";
 
 const RESULT_META = {
   clear: { icon: CheckCircle2, label: "클리어", className: "bg-emerald-100 text-emerald-700" },
-  fail: { icon: XCircle, label: "실패", className: "bg-rose-100 text-rose-700" },
+  "in-progress": { icon: Clock, label: "진행중", className: "bg-amber-100 text-amber-700" },
 } as const;
 
 interface EpisodeRowProps {

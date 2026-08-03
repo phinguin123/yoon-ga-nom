@@ -8,6 +8,9 @@ import axios from "axios";
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL ?? "/api",
   timeout: 10_000,
+  // Required so the httpOnly admin session cookie is sent/received —
+  // both in dev (cross-origin :5173 -> :4000) and in prod (same-origin).
+  withCredentials: true,
 });
 
 api.interceptors.response.use(

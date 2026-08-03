@@ -10,3 +10,7 @@ npm-debug.log*
 .vscode/
 .idea/
 coverage/
+
+# SQLite database (contains admin-managed content, not sample data)
+backend/data/*.db
+backend/data/*.db-*

@@ -4,6 +4,8 @@ import { rouletteRouter } from "./roulette.routes.js";
 import { scheduleRouter } from "./schedule.routes.js";
 import { streamLogRouter } from "./streamLog.routes.js";
 import { dyangRouter } from "./dyang.routes.js";
+import { authRouter } from "./auth.routes.js";
+import { adminVideosRouter } from "./adminVideos.routes.js";
 
 export const apiRouter = Router();
 
@@ -16,3 +18,6 @@ apiRouter.use("/roulette", rouletteRouter);
 apiRouter.use("/schedule", scheduleRouter);
 apiRouter.use("/stream-log", streamLogRouter);
 apiRouter.use("/dyang", dyangRouter);
+
+apiRouter.use("/admin/auth", authRouter);
+apiRouter.use("/admin/videos", adminVideosRouter);
