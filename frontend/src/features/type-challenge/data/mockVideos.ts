@@ -1,0 +1,81 @@
+import type { TypeChallengeVideo } from "@/types";
+
+/**
+ * Placeholder data so the gallery renders realistically out of the box.
+ * Replace with a `useQuery` call to `GET /api/type-challenge` once the
+ * backend is wired to a real data source (YouTube API, DB, or CMS).
+ */
+export const MOCK_TYPE_CHALLENGE_VIDEOS: TypeChallengeVideo[] = [
+  {
+    id: "tc-1",
+    title: "고스트 타입만으로 8체육관 클리어 가능?!",
+    youtubeId: "dQw4w9WgXcQ",
+    thumbnailUrl: "https://placehold.co/640x360/1c5cf5/white?text=Ghost+Type",
+    types: ["ghost"],
+    result: "clear",
+    durationSeconds: 5423,
+    publishedAt: "2026-06-12",
+    views: 182000,
+    tags: ["챌린지", "고스트", "풀클리어"],
+  },
+  {
+    id: "tc-2",
+    title: "불꽃 타입 vs 물 체육관장.. 이길 수 있을까",
+    youtubeId: "dQw4w9WgXcQ",
+    thumbnailUrl: "https://placehold.co/640x360/ff9d1f/white?text=Fire+Type",
+    types: ["fire"],
+    result: "fail",
+    durationSeconds: 3311,
+    publishedAt: "2026-05-28",
+    views: 97400,
+    tags: ["챌린지", "불꽃"],
+  },
+  {
+    id: "tc-3",
+    title: "드래곤+얼음 듀얼 타입 챌린지 (역대급 난이도)",
+    youtubeId: "dQw4w9WgXcQ",
+    thumbnailUrl: "https://placehold.co/640x360/59a3ff/white?text=Dragon+Ice",
+    types: ["dragon", "ice"],
+    result: "in-progress",
+    durationSeconds: 4820,
+    publishedAt: "2026-07-02",
+    views: 64200,
+    tags: ["챌린지", "드래곤", "얼음"],
+  },
+  {
+    id: "tc-4",
+    title: "전기 타입만으로 챔피언로드 완주",
+    youtubeId: "dQw4w9WgXcQ",
+    thumbnailUrl: "https://placehold.co/640x360/f7d117/white?text=Electric",
+    types: ["electric"],
+    result: "clear",
+    durationSeconds: 6011,
+    publishedAt: "2026-04-19",
+    views: 231000,
+    tags: ["챌린지", "전기", "풀클리어"],
+  },
+  {
+    id: "tc-5",
+    title: "독+벌레 타입 콤보, 생각보다 강함?",
+    youtubeId: "dQw4w9WgXcQ",
+    thumbnailUrl: "https://placehold.co/640x360/9b59b6/white?text=Poison+Bug",
+    types: ["poison", "bug"],
+    result: "clear",
+    durationSeconds: 4110,
+    publishedAt: "2026-03-30",
+    views: 55300,
+    tags: ["챌린지", "독", "벌레"],
+  },
+  {
+    id: "tc-6",
+    title: "강철 타입 원턴킬 모음.zip",
+    youtubeId: "dQw4w9WgXcQ",
+    thumbnailUrl: "https://placehold.co/640x360/7f8c8d/white?text=Steel",
+    types: ["steel"],
+    result: "clear",
+    durationSeconds: 2870,
+    publishedAt: "2026-02-14",
+    views: 143000,
+    tags: ["챌린지", "강철", "하이라이트"],
+  },
+];

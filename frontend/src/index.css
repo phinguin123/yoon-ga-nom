@@ -1,0 +1,114 @@
+@import url("https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Poppins:wght@400;500;600;700;800&display=swap");
+@import "tailwindcss";
+
+@theme {
+  /* Brand — Pokémon-inspired but original, trendy palette */
+  --color-brand-50: #eef6ff;
+  --color-brand-100: #d9ebff;
+  --color-brand-200: #bcdcff;
+  --color-brand-300: #8ec4ff;
+  --color-brand-400: #59a3ff;
+  --color-brand-500: #327dff;
+  --color-brand-600: #1c5cf5;
+  --color-brand-700: #1747d6;
+  --color-brand-800: #1a3caf;
+  --color-brand-900: #1b378a;
+  --color-brand-950: #142254;
+
+  --color-ember-400: #ffb84d;
+  --color-ember-500: #ff9d1f;
+  --color-ember-600: #f27f00;
+
+  /* Dyang collab palette — soft, romantic */
+  --color-dyang-50: #fff5f8;
+  --color-dyang-100: #ffe4ee;
+  --color-dyang-200: #ffc9de;
+  --color-dyang-300: #ffa0c4;
+  --color-dyang-400: #ff70a4;
+  --color-dyang-500: #fb4d8b;
+  --color-dyang-600: #e63373;
+  --color-dyang-700: #c1215d;
+  --color-dyang-800: #911a46;
+  --color-dyang-900: #591028;
+
+  --font-display: "Poppins", "Pretendard", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Pretendard", ui-sans-serif, system-ui, sans-serif;
+  --font-romantic: "Gowun Dodum", "Pretendard", ui-serif, serif;
+
+  --shadow-glow: 0 0 40px -8px var(--color-brand-500);
+  --shadow-dyang-glow: 0 0 40px -8px var(--color-dyang-400);
+
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-spin-slow: spin 3s linear infinite;
+  --animate-shimmer: shimmer 2.5s linear infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-14px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -700px 0; }
+  100% { background-position: 700px 0; }
+}
+
+@layer base {
+  * {
+    @apply border-slate-200;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 font-sans antialiased;
+  }
+
+  ::selection {
+    @apply bg-brand-300/60 text-brand-950;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-slate-100;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-400;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-xl border border-white/60 shadow-xl shadow-slate-900/5;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand-600/25 transition-all hover:bg-brand-700 hover:shadow-brand-600/40 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-brand-300 hover:text-brand-700 hover:-translate-y-0.5 active:translate-y-0;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold;
+  }
+}
+
+/* Dyang page — scoped romantic theme, activated via .theme-dyang wrapper */
+.theme-dyang {
+  font-family: var(--font-romantic);
+}

@@ -1,0 +1,58 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    image: yoon-ga-nom-frontend:latest
+    container_name: yoon-ga-nom-frontend
+    restart: unless-stopped
+    expose:
+      - "80"
+    networks:
+      - webnet
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    image: yoon-ga-nom-backend:latest
+    container_name: yoon-ga-nom-backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      NODE_ENV: production
+      PORT: "4000"
+      # Frontend and API are served under the same domain via Caddy, so this
+      # is only a safety net for direct/cross-origin requests to the API.
+      CORS_ORIGIN: https://example.com
+    expose:
+      - "4000"
+    networks:
+      - webnet
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: yoon-ga-nom-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp" # HTTP/3 (QUIC)
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - webnet
+
+networks:
+  webnet:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:

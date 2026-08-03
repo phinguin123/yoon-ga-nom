@@ -1,0 +1,35 @@
+# Replace "example.com" below with your real domain (and update the redirect
+# block to match). Caddy automatically provisions and renews a Let's Encrypt
+# TLS certificate for any domain listed here — no extra config required, as
+# long as DNS already points to this server and ports 80/443 are reachable.
+
+example.com {
+    encode zstd gzip
+
+    # Everything under /api is proxied to the Express backend.
+    handle /api/* {
+        reverse_proxy backend:4000
+    }
+
+    # Everything else is served by the frontend's nginx container.
+    handle {
+        reverse_proxy frontend:80
+    }
+
+    header {
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    }
+
+    log {
+        output file /data/access.log {
+            roll_size 10mb
+            roll_keep 5
+        }
+    }
+}
+
+www.example.com {
+    redir https://example.com{uri} permanent
+}

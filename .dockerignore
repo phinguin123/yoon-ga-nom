@@ -1,0 +1,15 @@
+**/node_modules
+**/dist
+**/build
+**/.env
+**/.env.*
+!**/.env.example
+.git
+.gitignore
+.github
+*.log
+npm-debug.log*
+.DS_Store
+.vscode
+.idea
+README.md
