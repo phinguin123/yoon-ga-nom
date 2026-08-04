@@ -22,6 +22,21 @@ export const env = {
   youtubeApiKey: process.env.YOUTUBE_API_KEY?.trim() || undefined,
   adminPasswordHash: process.env.ADMIN_PASSWORD_HASH,
   jwtSecret: process.env.JWT_SECRET,
+
+  // Kakao fan-account login (see services/kakao.service.ts). The Kakao
+  // client secret is optional — it's only required if "Client Secret" is
+  // turned on for the app in the Kakao Developers console.
+  kakaoClientId: process.env.KAKAO_CLIENT_ID,
+  kakaoClientSecret: process.env.KAKAO_CLIENT_SECRET,
+  kakaoRedirectUri: process.env.KAKAO_REDIRECT_URI,
+
+  // Custom session JWTs issued after a successful Kakao login (see
+  // services/userAuth.service.ts) — deliberately separate secrets/module
+  // from the single-password admin JWT above.
+  jwtAccessSecret: process.env.JWT_ACCESS_SECRET,
+  jwtRefreshSecret: process.env.JWT_REFRESH_SECRET,
+  accessTokenTtl: getEnv("ACCESS_TOKEN_TTL", "2h"),
+  refreshTokenTtl: getEnv("REFRESH_TOKEN_TTL", "14d"),
 };
 
 export const isProduction = env.nodeEnv === "production";

@@ -2,6 +2,8 @@ import { Outlet, useLocation } from "react-router-dom";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 import { cn } from "@/lib/utils";
+import { LoginRequiredDialog } from "@/features/auth/components/LoginRequiredDialog";
+import { useAuthBootstrap } from "@/features/auth/hooks/useAuthBootstrap";
 
 /**
  * App shell shared by every route. The "/dyang" route gets a distinct
@@ -11,6 +13,7 @@ import { cn } from "@/lib/utils";
 export function MainLayout() {
   const location = useLocation();
   const isDyang = location.pathname.startsWith("/dyang");
+  useAuthBootstrap();
 
   return (
     <div
@@ -24,6 +27,7 @@ export function MainLayout() {
         <Outlet />
       </main>
       <Footer />
+      <LoginRequiredDialog />
     </div>
   );
 }

@@ -12,6 +12,8 @@ const SchedulePage = lazy(() => import("@/pages/SchedulePage"));
 const StreamLogPage = lazy(() => import("@/pages/StreamLogPage"));
 const DotyPage = lazy(() => import("@/pages/DotyPage"));
 const DyangPage = lazy(() => import("@/pages/DyangPage"));
+const LoginPage = lazy(() => import("@/pages/LoginPage"));
+const KakaoCallbackPage = lazy(() => import("@/pages/KakaoCallbackPage"));
 const AdminLoginPage = lazy(() => import("@/pages/AdminLoginPage"));
 const AdminVideosPage = lazy(() => import("@/pages/AdminVideosPage"));
 const AdminDripsPage = lazy(() => import("@/pages/AdminDripsPage"));
@@ -30,6 +32,10 @@ function RouteFallback() {
 }
 
 export const router = createBrowserRouter([
+  // Deliberately outside MainLayout — no Navbar/Footer during the Kakao
+  // login handoff (see LoginPage.tsx).
+  { path: "/login", element: withSuspense(<LoginPage />) },
+  { path: "/auth/kakao/callback", element: withSuspense(<KakaoCallbackPage />) },
   {
     path: "/",
     element: <MainLayout />,

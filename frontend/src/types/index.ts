@@ -51,20 +51,6 @@ export interface ChallengeSeries {
   finalResult: "clear" | null;
 }
 
-export interface RoulettePreset {
-  id: string;
-  name: string;
-  description?: string;
-  options: RouletteOption[];
-}
-
-export interface RouletteOption {
-  id: string;
-  label: string;
-  color?: string;
-  weight?: number;
-}
-
 export type ScheduleEventType = "stream" | "collab" | "event" | "notice";
 
 export interface ScheduleEvent {
@@ -127,3 +113,11 @@ export interface Drip {
 
 export type DripSort = "likes" | "recent";
 export type DripYearFilter = number | "all";
+
+/** The fan account returned after a successful Kakao login. See backend `services/userAuth.service.ts`. */
+export interface AuthUser {
+  id: number;
+  nickname: string;
+  profileImage: string | null;
+  role: "user" | "admin";
+}

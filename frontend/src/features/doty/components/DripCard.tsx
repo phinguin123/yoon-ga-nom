@@ -1,6 +1,8 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import type { Drip, DripSort, DripYearFilter } from "@/types";
 import { formatDuration } from "@/lib/utils";
+import { useRequireAuth } from "@/features/auth/hooks/useRequireAuth";
 import { useLikeDrip } from "../hooks/useDrips";
 import { buildYoutubeEmbedUrl } from "../utils/youtube";
 
@@ -34,12 +36,22 @@ export function DripCard({ drip, sort, year, showYear, rank }: DripCardProps) {
   const { mutate: like, isPending } = useLikeDrip(sort, year);
   const [liked, setLiked] = useState(false);
   const [playing, setPlaying] = useState(false);
+  const requireAuth = useRequireAuth();
 
   const handleLike = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (isPending) return;
-    setLiked(true);
-    like(drip.id);
+    requireAuth(() => {
+      if (isPending) return;
+      setLiked(true);
+      like(drip.id);
+    });
+  };
+
+  const handleCommentClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    requireAuth(() => {
+      toast("댓글 기능은 곧 만나요! 🚧");
+    });
   };
 
   const formattedDate = new Date(drip.publishedAt).toLocaleDateString("ko-KR", {
@@ -134,8 +146,16 @@ export function DripCard({ drip, sort, year, showYear, rank }: DripCardProps) {
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-[12px] text-[#86868b]">💬 {drip.comments.toLocaleString()}</span>
             <button
+              type="button"
+              onClick={handleCommentClick}
+              className="flex items-center gap-1 rounded-full px-2 py-0.5 text-[12px] text-[#86868b] transition-colors duration-150 hover:text-[#1d1d1f]"
+              aria-label={`${drip.title} 댓글`}
+            >
+              💬 {drip.comments.toLocaleString()}
+            </button>
+            <button
+              type="button"
               onClick={handleLike}
               disabled={isPending}
               className="flex items-center gap-1 rounded-full px-2 py-0.5 text-[12px] font-medium transition-all duration-150 disabled:cursor-not-allowed"

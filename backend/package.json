@@ -16,6 +16,7 @@
     "hash-password": "tsx scripts/hash-password.ts"
   },
   "dependencies": {
+    "axios": "^1.7.9",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",

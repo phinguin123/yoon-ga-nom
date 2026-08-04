@@ -111,6 +111,16 @@ export interface Drip {
   createdAt: string;
 }
 
+/** A fan account, created on first Kakao login. See db/migrations.ts "009_create_users". */
+export interface User {
+  id: number;
+  kakaoId: string;
+  nickname: string;
+  profileImage: string | null;
+  role: "user" | "admin";
+  createdAt: string;
+}
+
 export interface ApiSuccess<T> {
   success: true;
   data: T;

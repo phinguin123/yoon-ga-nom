@@ -197,4 +197,27 @@ export const MIGRATIONS: Migration[] = [
       db.exec(`CREATE INDEX IF NOT EXISTS idx_drips_published_at ON drips(published_at DESC);`);
     },
   },
+  {
+    id: "009_create_users",
+    // Fan accounts, authenticated via Kakao Login. Kakao is only ever used
+    // to prove identity once at login time — we never store or reuse
+    // Kakao's own access/refresh tokens; every session afterwards runs on
+    // our own JWTs (see services/userAuth.service.ts). `role` defaults to
+    // 'user' and is independent of the single-password /admin dashboard
+    // login (services/auth.service.ts) — it exists so a fan account can be
+    // promoted later without a schema change.
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS users (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          kakao_id TEXT NOT NULL UNIQUE,
+          nickname TEXT NOT NULL,
+          profile_image TEXT,
+          role TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('user', 'admin')),
+          created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+        );
+      `);
+      db.exec(`CREATE INDEX IF NOT EXISTS idx_users_kakao_id ON users(kakao_id);`);
+    },
+  },
 ];
