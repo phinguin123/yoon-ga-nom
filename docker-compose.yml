@@ -25,7 +25,7 @@ services:
       PORT: "4000"
       # Frontend and API are served under the same domain via Caddy, so this
       # is only a safety net for direct/cross-origin requests to the API.
-      CORS_ORIGIN: https://example.com
+      CORS_ORIGIN: https://yoonganom.com
     volumes:
       # Persists the SQLite database (admin-managed episodes) across
       # container rebuilds/restarts. Back this volume up separately.
