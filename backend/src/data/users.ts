@@ -56,6 +56,12 @@ function updateUserProfile(
  * sign up on first login, otherwise refresh the cached profile fields and
  * return the existing account untouched otherwise (id, role, created_at).
  */
+/** Removes a fan account after Kakao sends an unlink webhook (privacy compliance). */
+export function deleteUserByKakaoId(kakaoId: string): boolean {
+  const result = db.prepare("DELETE FROM users WHERE kakao_id = ?").run(kakaoId);
+  return result.changes > 0;
+}
+
 export function findOrCreateUserByKakaoProfile(profile: {
   kakaoId: string;
   nickname: string;

@@ -29,6 +29,9 @@ export const env = {
   kakaoClientId: process.env.KAKAO_CLIENT_ID,
   kakaoClientSecret: process.env.KAKAO_CLIENT_SECRET,
   kakaoRedirectUri: process.env.KAKAO_REDIRECT_URI,
+  // Primary Admin Key — Kakao includes this in the Authorization header of
+  // unlink webhooks as `KakaoAK ${KAKAO_ADMIN_KEY}`.
+  kakaoAdminKey: process.env.KAKAO_ADMIN_KEY,
 
   // Custom session JWTs issued after a successful Kakao login (see
   // services/userAuth.service.ts) — deliberately separate secrets/module

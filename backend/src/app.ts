@@ -16,6 +16,8 @@ export function createApp() {
   // backend :4000). In prod, both are served from the same domain via
   // Caddy, so this is mostly relevant for local development.
   app.use(cors({ origin: env.corsOrigin, credentials: true }));
+  // Kakao unlink webhooks POST form fields; JSON for other API routes.
+  app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
   app.use(cookieParser());
   app.use(morgan(isProduction ? "combined" : "dev"));
