@@ -42,6 +42,9 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=prod-deps /app/backend/package.json ./backend/package.json
+# Workspace installs can place deps under backend/node_modules when versions
+# differ from the hoisted root tree (e.g. backend zod@3 vs frontend zod@4).
+COPY --from=prod-deps /app/backend/node_modules ./backend/node_modules
 COPY --from=build /app/backend/dist ./backend/dist
 
 # Persisted separately via a named volume in docker-compose.yml — this is
