@@ -4,6 +4,8 @@
 **/.env
 **/.env.*
 !**/.env.example
+# Vite bakes VITE_* vars at build time; frontend/.env must be in the image build context.
+!frontend/.env
 .git
 .gitignore
 .github
