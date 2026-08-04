@@ -6,6 +6,8 @@ import { streamLogRouter } from "./streamLog.routes.js";
 import { dyangRouter } from "./dyang.routes.js";
 import { authRouter } from "./auth.routes.js";
 import { adminVideosRouter } from "./adminVideos.routes.js";
+import { adminDripsRouter } from "./adminDrips.routes.js";
+import { dripRouter } from "./drip.routes.js";
 
 export const apiRouter = Router();
 
@@ -18,6 +20,8 @@ apiRouter.use("/roulette", rouletteRouter);
 apiRouter.use("/schedule", scheduleRouter);
 apiRouter.use("/stream-log", streamLogRouter);
 apiRouter.use("/dyang", dyangRouter);
+apiRouter.use("/drips", dripRouter);
 
 apiRouter.use("/admin/auth", authRouter);
 apiRouter.use("/admin/videos", adminVideosRouter);
+apiRouter.use("/admin/drips", adminDripsRouter);

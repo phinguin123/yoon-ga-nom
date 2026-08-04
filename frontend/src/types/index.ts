@@ -106,3 +106,24 @@ export interface DyangEvent {
   imageUrl?: string;
   sourceUrl?: string;
 }
+
+export interface Drip {
+  id: number;
+  title: string;
+  youtubeVideoId: string;
+  /** Clip start point within the video, e.g. "23m45s". */
+  timestamp: string;
+  /** Derived from the YouTube Data API when available, otherwise the static thumbnail CDN — never entered by hand. */
+  thumbnailUrl: string;
+  /** Derived from the YouTube Data API — 0 if not (yet) fetched. */
+  durationSeconds: number;
+  likes: number;
+  comments: number;
+  tags: string[];
+  /** YouTube video upload date — merged server-side from the Data API. */
+  publishedAt: string;
+  createdAt: string;
+}
+
+export type DripSort = "likes" | "recent";
+export type DripYearFilter = number | "all";

@@ -39,6 +39,17 @@ export function EpisodeForm({ initial, onSubmit, onCancel, isSubmitting }: Episo
   const [tags, setTags] = useState<string[]>(initial?.tags ?? []);
 
   const handleSubmit = (event: FormEvent) => {
+    console.log("Inside handleSubmit");
+    console.log("seriesTitle", seriesTitle);
+    console.log("seriesStatus", seriesStatus);
+    console.log("episodeNumber", episodeNumber);
+    console.log("title", title);
+    console.log("youtubeId", youtubeId);
+    console.log("thumbnailUrl", thumbnailUrl);
+    console.log("result", result);
+    console.log("durationSeconds", minutes * 60 + seconds);
+    console.log("publishedAt", publishedAt);
+    console.log("views", views);
     event.preventDefault();
 
     const fallbackThumbnail = `https://placehold.co/640x360/${POKEMON_TYPE_META[type].color.replace(

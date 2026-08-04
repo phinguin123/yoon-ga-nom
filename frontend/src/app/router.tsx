@@ -1,7 +1,8 @@
 import { lazy, Suspense } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { RequireAdmin } from "@/features/admin/components/RequireAdmin";
+import { AdminLayout } from "@/features/admin/components/AdminLayout";
 
 const HomePage = lazy(() => import("@/pages/HomePage"));
 const TypeChallengePage = lazy(() => import("@/pages/TypeChallengePage"));
@@ -9,9 +10,11 @@ const TypeChallengeSeriesPage = lazy(() => import("@/pages/TypeChallengeSeriesPa
 const RoulettePage = lazy(() => import("@/pages/RoulettePage"));
 const SchedulePage = lazy(() => import("@/pages/SchedulePage"));
 const StreamLogPage = lazy(() => import("@/pages/StreamLogPage"));
+const DotyPage = lazy(() => import("@/pages/DotyPage"));
 const DyangPage = lazy(() => import("@/pages/DyangPage"));
 const AdminLoginPage = lazy(() => import("@/pages/AdminLoginPage"));
-const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
+const AdminVideosPage = lazy(() => import("@/pages/AdminVideosPage"));
+const AdminDripsPage = lazy(() => import("@/pages/AdminDripsPage"));
 const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 
 function withSuspense(element: React.ReactNode) {
@@ -37,12 +40,22 @@ export const router = createBrowserRouter([
       { path: "roulette", element: withSuspense(<RoulettePage />) },
       { path: "schedule", element: withSuspense(<SchedulePage />) },
       { path: "stream-log", element: withSuspense(<StreamLogPage />) },
+      { path: "doty", element: withSuspense(<DotyPage />) },
       { path: "dyang", element: withSuspense(<DyangPage />) },
       { path: "admin/login", element: withSuspense(<AdminLoginPage />) },
       {
         path: "admin",
         element: <RequireAdmin />,
-        children: [{ index: true, element: withSuspense(<AdminDashboardPage />) }],
+        children: [
+          {
+            element: <AdminLayout />,
+            children: [
+              { index: true, element: <Navigate to="/admin/videos" replace /> },
+              { path: "videos", element: withSuspense(<AdminVideosPage />) },
+              { path: "drips", element: withSuspense(<AdminDripsPage />) },
+            ],
+          },
+        ],
       },
       { path: "*", element: withSuspense(<NotFoundPage />) },
     ],

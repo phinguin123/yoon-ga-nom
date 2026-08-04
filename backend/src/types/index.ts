@@ -92,6 +92,25 @@ export interface DyangEvent {
   sourceUrl?: string;
 }
 
+export interface Drip {
+  id: number;
+  title: string;
+  youtubeVideoId: string;
+  /** Clip start point within the video, e.g. "23m45s". */
+  timestamp: string;
+  /** Derived from the YouTube Data API when available, otherwise the static thumbnail CDN — never entered by hand. */
+  thumbnailUrl: string;
+  /** Derived from the YouTube Data API — 0 if not (yet) fetched. */
+  durationSeconds: number;
+  likes: number;
+  comments: number;
+  tags: string[];
+  /** YouTube video upload date, merged from the Data API on read. */
+  publishedAt: string;
+  /** When this drip was added in admin — not shown on the public DOTY page. */
+  createdAt: string;
+}
+
 export interface ApiSuccess<T> {
   success: true;
   data: T;

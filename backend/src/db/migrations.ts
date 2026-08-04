@@ -73,4 +73,128 @@ export const MIGRATIONS: Migration[] = [
       db.exec(`CREATE INDEX IF NOT EXISTS idx_episodes_type ON episodes(type);`);
     },
   },
+  {
+    id: "003_create_drips",
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS drips (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title TEXT NOT NULL,
+          description TEXT NOT NULL DEFAULT '',
+          youtube_video_id TEXT NOT NULL,
+          timestamp TEXT NOT NULL DEFAULT '0m0s',
+          likes INTEGER NOT NULL DEFAULT 0,
+          created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+        );
+      `);
+      db.exec(`CREATE INDEX IF NOT EXISTS idx_drips_likes ON drips(likes DESC);`);
+      db.exec(`CREATE INDEX IF NOT EXISTS idx_drips_created_at ON drips(created_at DESC);`);
+    },
+  },
+  {
+    id: "004_add_drip_year",
+    up: (db) => {
+      db.exec(`ALTER TABLE drips ADD COLUMN year INTEGER NOT NULL DEFAULT 2026;`);
+      db.exec(`UPDATE drips SET year = CAST(substr(created_at, 1, 4) AS INTEGER);`);
+      db.exec(`CREATE INDEX IF NOT EXISTS idx_drips_year ON drips(year);`);
+    },
+  },
+  {
+    id: "005_drop_drip_year",
+    // Year is derived from the YouTube upload date at read time — no manual DOTY year field.
+    up: (db) => {
+      db.exec(`DROP INDEX IF EXISTS idx_drips_year;`);
+      db.exec(`ALTER TABLE drips DROP COLUMN year;`);
+    },
+  },
+  {
+    id: "006_add_drip_published_at",
+    up: (db) => {
+      db.exec(`ALTER TABLE drips ADD COLUMN published_at TEXT;`);
+    },
+  },
+  {
+    id: "007_drips_native_video",
+    // Drips move from YouTube embeds to directly-hosted video files: drop
+    // `youtube_video_id`/`timestamp`/`description`, add `video_url`,
+    // `thumbnail_url`, `duration_seconds`, `comments`, and `tags`. SQLite
+    // can't drop/retype columns in place, so rebuild the table.
+    // `published_at` becomes an admin-entered "drip date" instead of a
+    // value fetched live from the YouTube API.
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE drips_new (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title TEXT NOT NULL,
+          video_url TEXT NOT NULL DEFAULT '',
+          thumbnail_url TEXT NOT NULL DEFAULT '',
+          duration_seconds INTEGER NOT NULL DEFAULT 0,
+          likes INTEGER NOT NULL DEFAULT 0,
+          comments INTEGER NOT NULL DEFAULT 0,
+          tags TEXT NOT NULL DEFAULT '[]',
+          published_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+          created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+        );
+      `);
+      db.exec(`
+        INSERT INTO drips_new
+          (id, title, video_url, thumbnail_url, duration_seconds, likes, comments, tags, published_at, created_at)
+        SELECT
+          id, title,
+          'https://www.youtube.com/watch?v=' || youtube_video_id,
+          '', 0, likes, 0, '[]',
+          COALESCE(published_at, created_at),
+          created_at
+        FROM drips;
+      `);
+      db.exec(`DROP TABLE drips;`);
+      db.exec(`ALTER TABLE drips_new RENAME TO drips;`);
+      db.exec(`CREATE INDEX IF NOT EXISTS idx_drips_likes ON drips(likes DESC);`);
+      db.exec(`CREATE INDEX IF NOT EXISTS idx_drips_created_at ON drips(created_at DESC);`);
+      db.exec(`CREATE INDEX IF NOT EXISTS idx_drips_published_at ON drips(published_at DESC);`);
+    },
+  },
+  {
+    id: "008_drips_back_to_youtube",
+    // Reverting 007: drips are YouTube clips again, not directly-hosted video
+    // files. Admins only ever paste a YouTube video ID (+ optional clip
+    // start timestamp) — the thumbnail, duration, and upload date are all
+    // derived automatically (see data/drips.ts), never entered by hand.
+    // `thumbnail_url`/`published_at` go back to nullable: null just means
+    // "not fetched from the YouTube API yet", with fallbacks computed at
+    // read time instead of a NOT NULL default masking that.
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE drips_new (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title TEXT NOT NULL,
+          youtube_video_id TEXT NOT NULL DEFAULT '',
+          timestamp TEXT NOT NULL DEFAULT '0m0s',
+          thumbnail_url TEXT,
+          duration_seconds INTEGER NOT NULL DEFAULT 0,
+          likes INTEGER NOT NULL DEFAULT 0,
+          comments INTEGER NOT NULL DEFAULT 0,
+          tags TEXT NOT NULL DEFAULT '[]',
+          published_at TEXT,
+          created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+        );
+      `);
+      db.exec(`
+        INSERT INTO drips_new
+          (id, title, youtube_video_id, timestamp, thumbnail_url, duration_seconds, likes, comments, tags, published_at, created_at)
+        SELECT
+          id, title,
+          CASE WHEN instr(video_url, 'v=') > 0 THEN substr(video_url, instr(video_url, 'v=') + 2) ELSE '' END,
+          '0m0s',
+          NULLIF(thumbnail_url, ''),
+          duration_seconds, likes, comments, tags, published_at, created_at
+        FROM drips;
+      `);
+      db.exec(`DROP TABLE drips;`);
+      db.exec(`ALTER TABLE drips_new RENAME TO drips;`);
+      db.exec(`CREATE INDEX IF NOT EXISTS idx_drips_likes ON drips(likes DESC);`);
+      db.exec(`CREATE INDEX IF NOT EXISTS idx_drips_created_at ON drips(created_at DESC);`);
+      db.exec(`CREATE INDEX IF NOT EXISTS idx_drips_published_at ON drips(published_at DESC);`);
+    },
+  },
 ];

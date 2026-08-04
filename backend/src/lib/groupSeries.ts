@@ -11,17 +11,22 @@ export function groupVideosBySeries(videos: TypeChallengeVideo[]): ChallengeSeri
   return Array.from(groups.entries()).map(([key, episodes]) => {
     const sorted = [...episodes].sort((a, b) => a.episodeNumber - b.episodeNumber);
     const latest = sorted[sorted.length - 1];
+    // Series completion is determined by the latest episode only — earlier
+    // episodes stay "in-progress" even after the run finishes. Ignore
+    // seriesStatus here; admins sometimes set it to "completed" prematurely.
+    const status: ChallengeSeries["status"] =
+      latest.result === "clear" ? "completed" : "ongoing";
 
     return {
       key,
       type: latest.type,
       seriesTitle: latest.seriesTitle,
-      status: latest.seriesStatus,
+      status,
       episodes: sorted,
       episodeCount: sorted.length,
       totalViews: sorted.reduce((sum, ep) => sum + ep.views, 0),
       latestPublishedAt: latest.publishedAt,
-      finalResult: latest.seriesStatus === "completed" && latest.result === "clear" ? "clear" : null,
+      finalResult: latest.result === "clear" ? "clear" : null,
     } satisfies ChallengeSeries;
   });
 }

@@ -1,10 +1,8 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { LogOut, Pencil, Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import { EpisodeForm } from "@/features/admin/components/EpisodeForm";
 import { getApiErrorMessage, type EpisodeInput } from "@/features/admin/api";
-import { useAdminLogout } from "@/features/admin/hooks/useAdminAuth";
 import {
   useAdminVideos,
   useCreateAdminVideo,
@@ -18,13 +16,11 @@ import type { TypeChallengeVideo } from "@/types";
 
 type FormMode = "idle" | "create" | "edit";
 
-export default function AdminDashboardPage() {
+export default function AdminVideosPage() {
   const { data: videos, isLoading, isError, refetch } = useAdminVideos();
   const createMutation = useCreateAdminVideo();
   const updateMutation = useUpdateAdminVideo();
   const deleteMutation = useDeleteAdminVideo();
-  const logoutMutation = useAdminLogout();
-  const navigate = useNavigate();
 
   const [mode, setMode] = useState<FormMode>("idle");
   const [editingVideo, setEditingVideo] = useState<TypeChallengeVideo | null>(null);
@@ -68,6 +64,7 @@ export default function AdminDashboardPage() {
   };
 
   const handleDelete = (video: TypeChallengeVideo) => {
+    console.log("Inside video", video);
     if (!window.confirm(`"${video.title}" 영상을 삭제할까요?`)) return;
     deleteMutation.mutate(video.id, {
       onSuccess: () => toast.success("삭제되었습니다."),
@@ -75,33 +72,18 @@ export default function AdminDashboardPage() {
     });
   };
 
-  const handleLogout = () => {
-    logoutMutation.mutate(undefined, {
-      onSuccess: () => navigate("/admin/login", { replace: true }),
-    });
-  };
-
   return (
-    <div className="container-page py-10 sm:py-14">
+    <>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl font-extrabold text-slate-900 sm:text-3xl">
-            챌린지 영상 관리
-          </h1>
-          <p className="mt-1 text-sm text-slate-500">
-            타입 챌린지 시리즈 영상을 추가, 수정, 삭제할 수 있어요.
-          </p>
+          <h2 className="font-display text-xl font-extrabold text-slate-900">챌린지 영상</h2>
+          <p className="mt-1 text-sm text-slate-500">타입 챌린지 시리즈 영상을 관리해요.</p>
         </div>
-        <div className="flex items-center gap-2">
-          {mode === "idle" && (
-            <button onClick={startCreate} className="btn-primary">
-              <Plus className="h-4 w-4" /> 영상 추가
-            </button>
-          )}
-          <button onClick={handleLogout} className="btn-secondary">
-            <LogOut className="h-4 w-4" /> 로그아웃
+        {mode === "idle" && (
+          <button onClick={startCreate} className="btn-primary">
+            <Plus className="h-4 w-4" /> 영상 추가
           </button>
-        </div>
+        )}
       </div>
 
       {mode !== "idle" && (
@@ -165,7 +147,9 @@ export default function AdminDashboardPage() {
                         {video.result === "clear" ? "클리어" : "진행중"}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-slate-500">{formatDuration(video.durationSeconds)}</td>
+                    <td className="px-4 py-3 text-slate-500">
+                      {formatDuration(video.durationSeconds)}
+                    </td>
                     <td className="px-4 py-3 text-slate-500">{video.publishedAt}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
@@ -198,6 +182,6 @@ export default function AdminDashboardPage() {
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 }
