@@ -14,7 +14,7 @@ const NAV_LINKS: NavLinkItem[] = [
   { to: "/type-challenge", label: "타입 챌린지" },
   { to: "/roulette", label: "룰렛" },
   { to: "/schedule", label: "일정" },
-  { to: "/stream-log", label: "다시보기 기록" },
+  { to: "/stream-log", label: "다시보기" },
   { to: "/doty", label: "DOTY 🏆" },
   { to: "/dyang", label: "댱 콜라보", special: true },
 ];

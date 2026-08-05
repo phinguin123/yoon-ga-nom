@@ -17,6 +17,8 @@ const KakaoCallbackPage = lazy(() => import("@/pages/KakaoCallbackPage"));
 const AdminLoginPage = lazy(() => import("@/pages/AdminLoginPage"));
 const AdminVideosPage = lazy(() => import("@/pages/AdminVideosPage"));
 const AdminDripsPage = lazy(() => import("@/pages/AdminDripsPage"));
+const AdminVodsPage = lazy(() => import("@/pages/AdminVodsPage"));
+const AdminSchedulePage = lazy(() => import("@/pages/AdminSchedulePage"));
 const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 
 function withSuspense(element: React.ReactNode) {
@@ -59,6 +61,8 @@ export const router = createBrowserRouter([
               { index: true, element: <Navigate to="/admin/videos" replace /> },
               { path: "videos", element: withSuspense(<AdminVideosPage />) },
               { path: "drips", element: withSuspense(<AdminDripsPage />) },
+              { path: "vods", element: withSuspense(<AdminVodsPage />) },
+              { path: "schedule", element: withSuspense(<AdminSchedulePage />) },
             ],
           },
         ],

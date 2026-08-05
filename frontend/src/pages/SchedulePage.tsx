@@ -1,60 +1,64 @@
 import { useMemo, useState } from "react";
-import type { ScheduleEventType } from "@/types";
-import { MOCK_SCHEDULE_EVENTS } from "@/features/schedule/data/mockEvents";
-import { ScheduleTimeline } from "@/features/schedule/components/ScheduleTimeline";
-import { EVENT_TYPE_META } from "@/features/schedule/eventMeta";
+import { AnimatePresence } from "framer-motion";
+import type { ScheduleEvent } from "@/types";
+import { useScheduleCategories, useScheduleEvents } from "@/features/schedule/hooks/useSchedule";
+import { CategoryFilterBar } from "@/features/schedule/components/CategoryFilterBar";
+import { MonthCalendar } from "@/features/schedule/components/MonthCalendar";
+import { EventDetailModal } from "@/features/schedule/components/EventDetailModal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { cn } from "@/lib/utils";
+import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 
-const FILTERS: Array<{ id: ScheduleEventType | "all"; label: string }> = [
-  { id: "all", label: "전체" },
-  { id: "stream", label: "방송" },
-  { id: "collab", label: "콜라보" },
-  { id: "event", label: "이벤트" },
-  { id: "notice", label: "공지" },
-];
+interface ModalState {
+  events: ScheduleEvent[];
+}
 
 export default function SchedulePage() {
-  const [filter, setFilter] = useState<ScheduleEventType | "all">("all");
+  const { data: events, isLoading, isError, refetch } = useScheduleEvents();
+  const { data: categories = [] } = useScheduleCategories();
+  const [categoryFilter, setCategoryFilter] = useState<number | "all">("all");
+  const [modal, setModal] = useState<ModalState | null>(null);
 
   const filteredEvents = useMemo(() => {
-    if (filter === "all") return MOCK_SCHEDULE_EVENTS;
-    return MOCK_SCHEDULE_EVENTS.filter((e) => e.type === filter);
-  }, [filter]);
+    if (!events) return [];
+    if (categoryFilter === "all") return events;
+    return events.filter((e) => e.categoryId === categoryFilter);
+  }, [events, categoryFilter]);
 
   return (
     <div className="container-page py-10 sm:py-14">
       <SectionHeading
         eyebrow="Schedule"
         title="방송 일정 & 공지사항"
-        description="다가오는 방송, 콜라보, 이벤트를 한눈에 확인하세요. 놓치면 안 되는 공지는 상단에 고정돼요."
+        description="구글 캘린더처럼 한눈에 보는 방송, 콜라보, 이벤트 일정이에요. 날짜의 일정을 클릭하면 자세한 내용을 볼 수 있어요."
       />
 
-      <div className="mt-8 flex flex-wrap gap-2">
-        {FILTERS.map((f) => {
-          const meta = f.id === "all" ? null : EVENT_TYPE_META[f.id];
-          return (
-            <button
-              key={f.id}
-              type="button"
-              onClick={() => setFilter(f.id)}
-              className={cn(
-                "rounded-full border px-4 py-2 text-sm font-semibold transition-all",
-                filter === f.id
-                  ? "border-brand-500 bg-brand-600 text-white shadow-md shadow-brand-600/20"
-                  : "border-slate-200 bg-white text-slate-600 hover:border-slate-300",
-              )}
-            >
-              {meta && <span className={cn("mr-1.5 inline-block h-2 w-2 rounded-full", meta.dot)} />}
-              {f.label}
-            </button>
-          );
-        })}
+      <div className="mt-8">
+        <CategoryFilterBar categories={categories} activeId={categoryFilter} onChange={setCategoryFilter} />
       </div>
 
-      <div className="mt-10 max-w-3xl">
-        <ScheduleTimeline events={filteredEvents} />
+      <div className="mt-6">
+        {isLoading && <LoadingState label="일정을 불러오는 중..." />}
+        {isError && <ErrorState onRetry={() => refetch()} />}
+        {events && (
+          <MonthCalendar
+            events={filteredEvents}
+            categories={categories}
+            onEventClick={(event) => setModal({ events: [event] })}
+            onShowMore={(_date, dayEvents) => setModal({ events: dayEvents })}
+          />
+        )}
       </div>
+
+      <AnimatePresence>
+        {modal && (
+          <EventDetailModal
+            key="schedule-event-modal"
+            events={modal.events}
+            categories={categories}
+            onClose={() => setModal(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

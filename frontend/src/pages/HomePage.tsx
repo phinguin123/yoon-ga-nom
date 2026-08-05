@@ -28,8 +28,8 @@ const FEATURES = [
   {
     to: "/stream-log",
     icon: ListVideo,
-    title: "다시보기 기록",
-    description: "타임스탬프별 명대사와 명장면을 정리한 스토커 아카이브",
+    title: "다시보기",
+    description: "치지직 방송 다시보기를 카테고리별로 모아보기",
     accent: "from-slate-500 to-slate-700",
   },
   {
@@ -71,7 +71,7 @@ export default function HomePage() {
             transition={{ delay: 0.1 }}
             className="mx-auto mt-5 max-w-2xl text-base text-slate-500 sm:text-lg"
           >
-            타입 챌린지 아카이브부터 실시간 룰렛, 방송 일정, 다시보기 기록,
+            타입 챌린지 아카이브부터 실시간 룰렛, 방송 일정, 다시보기,
             그리고 댱과의 케미 아카이브까지 — 팬이 만든 가장 완성도 높은
             유틸리티 사이트.
           </motion.p>

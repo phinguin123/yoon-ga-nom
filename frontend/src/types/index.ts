@@ -51,16 +51,33 @@ export interface ChallengeSeries {
   finalResult: "clear" | null;
 }
 
-export type ScheduleEventType = "stream" | "collab" | "event" | "notice";
+/** A named, colored grouping for schedule events (e.g. "방송", "콜라보"), fully admin-managed — no fixed set of types. */
+export interface ScheduleCategory {
+  id: number;
+  name: string;
+  /** Hex color, e.g. "#327dff" — drives the calendar dot/pill/badge color everywhere. */
+  color: string;
+  sortOrder: number;
+  createdAt: string;
+}
 
+/**
+ * A calendar event. `start`/`end` are ISO datetimes (always carrying the
+ * `+09:00` KST offset — this site has no multi-timezone audience). `end` is
+ * null for point-in-time events. `allDay` events still populate `start`
+ * (at 00:00 KST) so date math stays uniform.
+ */
 export interface ScheduleEvent {
-  id: string;
+  id: number;
+  categoryId: number | null;
   title: string;
-  type: ScheduleEventType;
+  description: string;
   start: string; // ISO datetime
-  end?: string;
-  description?: string;
-  isPinned?: boolean;
+  end: string | null; // ISO datetime
+  allDay: boolean;
+  isPinned: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface StreamLogEntry {
@@ -113,6 +130,31 @@ export interface Drip {
 
 export type DripSort = "likes" | "recent";
 export type DripYearFilter = number | "all";
+
+/** A named grouping for "다시보기" (VOD) entries, e.g. "타입 챌린지", "저챔". */
+export interface VodCategory {
+  id: number;
+  name: string;
+  sortOrder: number;
+  createdAt: string;
+}
+
+/**
+ * A single CHZZK "다시보기" (VOD) entry. Title/thumbnail/duration/views/
+ * publishedAt are fetched server-side from CHZZK's undocumented web API and
+ * stored — never entered by hand (see backend `services/chzzk.service.ts`).
+ */
+export interface Vod {
+  id: number;
+  chzzkVideoNo: number;
+  categoryId: number | null;
+  title: string;
+  thumbnailUrl: string;
+  durationSeconds: number;
+  views: number;
+  publishedAt: string; // ISO datetime
+  createdAt: string;
+}
 
 /** The fan account returned after a successful Kakao login. See backend `services/userAuth.service.ts`. */
 export interface AuthUser {

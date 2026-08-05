@@ -220,4 +220,149 @@ export const MIGRATIONS: Migration[] = [
       db.exec(`CREATE INDEX IF NOT EXISTS idx_users_kakao_id ON users(kakao_id);`);
     },
   },
+  {
+    id: "010_create_vod_categories_and_vods",
+    // "다시보기" admin: chzzk VOD catalog + simple named categories to sort
+    // them into. CHZZK has no official public API — title/thumbnail/
+    // duration/views/publishedAt are fetched from its undocumented web API
+    // (see services/chzzk.service.ts) at add/edit time and stored here as
+    // the source of truth, refreshed on demand rather than on every read.
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS vod_categories (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL UNIQUE,
+          sort_order INTEGER NOT NULL DEFAULT 0,
+          created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+        );
+      `);
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS vods (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          chzzk_video_no INTEGER NOT NULL UNIQUE,
+          category_id INTEGER REFERENCES vod_categories(id) ON DELETE SET NULL,
+          title TEXT NOT NULL DEFAULT '',
+          thumbnail_url TEXT NOT NULL DEFAULT '',
+          duration_seconds INTEGER NOT NULL DEFAULT 0,
+          views INTEGER NOT NULL DEFAULT 0,
+          published_at TEXT,
+          created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+        );
+      `);
+      db.exec(`CREATE INDEX IF NOT EXISTS idx_vods_category_id ON vods(category_id);`);
+      db.exec(`CREATE INDEX IF NOT EXISTS idx_vods_published_at ON vods(published_at DESC);`);
+    },
+  },
+  {
+    id: "011_create_schedule_categories_and_events",
+    // Google-Calendar-style scheduling: admin-managed colored categories
+    // (no fixed enum — replaces the old hardcoded stream/collab/event/notice
+    // union) plus the events themselves. Seeds the same four categories and
+    // sample events the site previously shipped as hardcoded mock data, so
+    // the calendar isn't empty on first boot.
+    up: (db) => {
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS schedule_categories (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL UNIQUE,
+          color TEXT NOT NULL,
+          sort_order INTEGER NOT NULL DEFAULT 0,
+          created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+        );
+      `);
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS schedule_events (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          category_id INTEGER REFERENCES schedule_categories(id) ON DELETE SET NULL,
+          title TEXT NOT NULL,
+          description TEXT NOT NULL DEFAULT '',
+          start_at TEXT NOT NULL,
+          end_at TEXT,
+          all_day INTEGER NOT NULL DEFAULT 0,
+          is_pinned INTEGER NOT NULL DEFAULT 0,
+          created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+          updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+        );
+      `);
+      db.exec(`CREATE INDEX IF NOT EXISTS idx_schedule_events_category_id ON schedule_events(category_id);`);
+      db.exec(`CREATE INDEX IF NOT EXISTS idx_schedule_events_start_at ON schedule_events(start_at);`);
+
+      const insertCategory = db.prepare(
+        "INSERT INTO schedule_categories (name, color, sort_order) VALUES (?, ?, ?)",
+      );
+      const categoryIds: Record<string, number> = {};
+      const seedCategories: [string, string][] = [
+        ["방송", "#327dff"],
+        ["콜라보", "#fb4d8b"],
+        ["이벤트", "#ff9d1f"],
+        ["공지", "#64748b"],
+      ];
+      seedCategories.forEach(([name, color], index) => {
+        const result = insertCategory.run(name, color, index);
+        categoryIds[name] = Number(result.lastInsertRowid);
+      });
+
+      const insertEvent = db.prepare(`
+        INSERT INTO schedule_events (category_id, title, description, start_at, end_at, all_day, is_pinned)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `);
+      const seedEvents: {
+        category: string;
+        title: string;
+        description?: string;
+        start: string;
+        end?: string;
+        isPinned?: boolean;
+      }[] = [
+        {
+          category: "방송",
+          title: "고스트 타입 챌린지 방송",
+          description: "8체육관 고스트 타입 단일 클리어 도전",
+          start: "2026-08-05T20:00:00+09:00",
+        },
+        {
+          category: "콜라보",
+          title: "댱과 함께하는 더블배틀 콜라보",
+          description: "댱 채널과 동시 송출 예정",
+          start: "2026-08-08T19:00:00+09:00",
+          end: "2026-08-08T22:00:00+09:00",
+          isPinned: true,
+        },
+        {
+          category: "이벤트",
+          title: "채널 20만 구독자 기념 이벤트",
+          description: "구독자 이벤트 상세 공지는 추후 업데이트",
+          start: "2026-08-15T00:00:00+09:00",
+          isPinned: true,
+        },
+        {
+          category: "공지",
+          title: "다음 주 스케줄 관련 공지",
+          description: "8/10~8/16 은 개인 사정으로 방송 횟수가 줄어들 수 있어요.",
+          start: "2026-08-03T12:00:00+09:00",
+        },
+        {
+          category: "방송",
+          title: "전기 타입 챌린지 방송",
+          start: "2026-08-12T20:00:00+09:00",
+        },
+        {
+          category: "방송",
+          title: "구독자 랜덤 듀오 방송",
+          start: "2026-08-19T21:00:00+09:00",
+        },
+      ];
+      for (const event of seedEvents) {
+        insertEvent.run(
+          categoryIds[event.category] ?? null,
+          event.title,
+          event.description ?? "",
+          event.start,
+          event.end ?? null,
+          0,
+          event.isPinned ? 1 : 0,
+        );
+      }
+    },
+  },
 ];

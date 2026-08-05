@@ -20,6 +20,13 @@ export const env = {
   port: Number(getEnv("PORT", "4000")),
   corsOrigin: getEnv("CORS_ORIGIN", "http://localhost:5173"),
   youtubeApiKey: process.env.YOUTUBE_API_KEY?.trim() || undefined,
+
+  // Channel whose VODs power the admin "치지직 채널에서 찾기" browser (see
+  // controllers/adminVods.controller.ts). CHZZK has no auth/key for reading
+  // public VOD data, so this just needs to be the streamer's channel ID —
+  // defaults to Yoon-ga-nom's own channel since this site is exclusively
+  // about them.
+  chzzkChannelId: process.env.CHZZK_CHANNEL_ID?.trim() || "1ad5aa0f6c6741b072528fad5e5e76b1",
   adminPasswordHash: process.env.ADMIN_PASSWORD_HASH,
   jwtSecret: process.env.JWT_SECRET,
 

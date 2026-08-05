@@ -1,11 +1,13 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { LogOut, Film, Trophy } from "lucide-react";
+import { LogOut, Film, Trophy, Clapperboard, CalendarDays } from "lucide-react";
 import { useAdminLogout } from "@/features/admin/hooks/useAdminAuth";
 import { cn } from "@/lib/utils";
 
 const ADMIN_TABS = [
   { to: "/admin/videos", label: "챌린지 영상", icon: Film },
   { to: "/admin/drips", label: "DOTY 드립", icon: Trophy },
+  { to: "/admin/vods", label: "다시보기", icon: Clapperboard },
+  { to: "/admin/schedule", label: "일정", icon: CalendarDays },
 ] as const;
 
 export function AdminLayout() {

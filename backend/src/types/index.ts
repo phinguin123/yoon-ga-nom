@@ -50,16 +50,33 @@ export interface RoulettePreset {
   options: { id: string; label: string; color?: string; weight?: number }[];
 }
 
-export type ScheduleEventType = "stream" | "collab" | "event" | "notice";
+/** A named, colored grouping for schedule events (e.g. "방송", "콜라보"), fully admin-managed — no fixed set of types. */
+export interface ScheduleCategory {
+  id: number;
+  name: string;
+  /** Hex color, e.g. "#327dff" — drives the calendar dot/pill/badge color everywhere. */
+  color: string;
+  sortOrder: number;
+  createdAt: string;
+}
 
+/**
+ * A calendar event. `start`/`end` are ISO datetimes (always carrying the
+ * `+09:00` KST offset — this site has no multi-timezone audience). `end` is
+ * null for point-in-time events. `allDay` events still populate `start`
+ * (at 00:00 KST) so date math stays uniform.
+ */
 export interface ScheduleEvent {
-  id: string;
+  id: number;
+  categoryId: number | null;
   title: string;
-  type: ScheduleEventType;
+  description: string;
   start: string;
-  end?: string;
-  description?: string;
-  isPinned?: boolean;
+  end: string | null;
+  allDay: boolean;
+  isPinned: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface StreamLogEntry {
@@ -108,6 +125,33 @@ export interface Drip {
   /** YouTube video upload date, merged from the Data API on read. */
   publishedAt: string;
   /** When this drip was added in admin — not shown on the public DOTY page. */
+  createdAt: string;
+}
+
+/** A named grouping for "다시보기" (VOD) entries, e.g. "타입 챌린지", "저챔". */
+export interface VodCategory {
+  id: number;
+  name: string;
+  sortOrder: number;
+  createdAt: string;
+}
+
+/**
+ * A single CHZZK "다시보기" (VOD) entry. CHZZK has no official public API,
+ * so title/thumbnail/duration/views/publishedAt are fetched from its
+ * undocumented web API (see services/chzzk.service.ts) at add/edit time and
+ * cached there, then stored here as the source of truth — refreshed on
+ * demand via the admin "새로고침" action rather than re-fetched on every read.
+ */
+export interface Vod {
+  id: number;
+  chzzkVideoNo: number;
+  categoryId: number | null;
+  title: string;
+  thumbnailUrl: string;
+  durationSeconds: number;
+  views: number;
+  publishedAt: string;
   createdAt: string;
 }
 
