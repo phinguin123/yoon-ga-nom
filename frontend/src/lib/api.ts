@@ -1,12 +1,14 @@
 import axios, { type AxiosRequestConfig } from "axios";
 
+const apiBaseURL = import.meta.env.VITE_API_BASE_URL?.trim() || "/api";
+
 /**
  * Central Axios instance for talking to the backend API.
  * In dev, Vite proxies "/api" to the Express server (see vite.config.ts).
  * In prod, set VITE_API_BASE_URL to the deployed API origin.
  */
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? "/api",
+  baseURL: apiBaseURL,
   timeout: 10_000,
   // Required so httpOnly session cookies (admin + fan refresh token) are
   // sent/received — both in dev (cross-origin :5173 -> :4000) and in prod
