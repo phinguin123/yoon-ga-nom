@@ -2,17 +2,17 @@ import { useMemo } from "react";
 import { Howl } from "howler";
 
 /**
- * Sound effects for the roulette wheel. Drop real audio files into
- * `public/sounds/` (tick.mp3, win.mp3) to enable them — until then,
- * playback fails silently so the feature still works without audio.
+ * Sound effects for the roulette wheel (spin tick + win chime). Loaded from
+ * `public/sounds/` — playback fails silently if a file is ever missing, so
+ * the feature still works without audio.
  */
 export function useRouletteSound() {
   const tickSound = useMemo(
-    () => new Howl({ src: ["/sounds/tick.mp3"], volume: 0.35, onloaderror: () => {} }),
+    () => new Howl({ src: ["/sounds/tick.wav"], volume: 0.25, onloaderror: () => {} }),
     [],
   );
   const winSound = useMemo(
-    () => new Howl({ src: ["/sounds/win.mp3"], volume: 0.6, onloaderror: () => {} }),
+    () => new Howl({ src: ["/sounds/win.wav"], volume: 0.55, onloaderror: () => {} }),
     [],
   );
 

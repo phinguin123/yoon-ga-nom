@@ -2,6 +2,8 @@ import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Eye, Film, CalendarClock } from "lucide-react";
 import { useChallengeSeries } from "@/features/type-challenge/hooks/useChallengeSeries";
 import { EpisodeRow } from "@/features/type-challenge/components/EpisodeRow";
+import { ChallengeRules } from "@/features/type-challenge/components/ChallengeRules";
+import { getSeriesChallengeRules } from "@/features/type-challenge/challengeRules";
 import { POKEMON_TYPE_META } from "@/features/type-challenge/pokemonTypeMeta";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 import { formatViews } from "@/lib/utils";
@@ -73,6 +75,8 @@ export default function TypeChallengeSeriesPage() {
               </div>
             </div>
           </div>
+
+          <ChallengeRules rules={getSeriesChallengeRules(series.key)} className="mt-6" />
 
           <h2 className="mb-4 mt-10 font-display text-lg font-bold text-slate-900">
             전체 에피소드 ({series.episodeCount})

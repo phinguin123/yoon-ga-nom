@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Sparkles } from "lucide-react";
+import { LogIn, Menu, X, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/features/auth/store/useAuthStore";
 
 interface NavLinkItem {
   to: string;
@@ -19,8 +20,22 @@ const NAV_LINKS: NavLinkItem[] = [
   { to: "/dyang", label: "댱 콜라보", special: true },
 ];
 
+function LoginButton({ className, onClick }: { className?: string; onClick?: () => void }) {
+  return (
+    <NavLink
+      to="/login"
+      onClick={onClick}
+      className={cn("btn-primary shrink-0 px-4 py-2 text-sm", className)}
+    >
+      <LogIn className="h-4 w-4" />
+      로그인
+    </NavLink>
+  );
+}
+
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const isAuthenticated = useAuthStore((state) => state.status === "authenticated");
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
@@ -69,16 +84,20 @@ export function Navbar() {
               )}
             </NavLink>
           ))}
+          {!isAuthenticated && <LoginButton className="ml-2" />}
         </div>
 
-        <button
-          type="button"
-          className="inline-flex items-center justify-center rounded-full p-2 text-slate-600 hover:bg-slate-100 md:hidden"
-          onClick={() => setIsOpen((v) => !v)}
-          aria-label="메뉴 열기"
-        >
-          {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          {!isAuthenticated && <LoginButton />}
+          <button
+            type="button"
+            className="inline-flex items-center justify-center rounded-full p-2 text-slate-600 hover:bg-slate-100"
+            onClick={() => setIsOpen((v) => !v)}
+            aria-label="메뉴 열기"
+          >
+            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </nav>
 
       <AnimatePresence>
@@ -107,6 +126,9 @@ export function Navbar() {
                   {link.label}
                 </NavLink>
               ))}
+              {!isAuthenticated && (
+                <LoginButton className="mt-1 w-full" onClick={() => setIsOpen(false)} />
+              )}
             </div>
           </motion.div>
         )}

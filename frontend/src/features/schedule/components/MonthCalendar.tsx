@@ -140,7 +140,7 @@ export function MonthCalendar({ events, categories, onEventClick, onShowMore, on
                       <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: color }} />
                       {event.isPinned && <Pin className="h-2.5 w-2.5 shrink-0" style={{ color }} />}
                       {!event.allDay && (
-                        <span className="shrink-0 font-mono text-[10px] text-slate-400">
+                        <span className="shrink-0 font-mono text-[10px] leading-none text-slate-400">
                           {isoTimeLabel(event.start)}
                         </span>
                       )}

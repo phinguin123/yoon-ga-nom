@@ -4,6 +4,8 @@ import type { PokemonType } from "@/types";
 import { useChallengeSeriesList } from "@/features/type-challenge/hooks/useChallengeSeries";
 import { TypeFilterBar } from "@/features/type-challenge/components/TypeFilterBar";
 import { SeriesCard } from "@/features/type-challenge/components/SeriesCard";
+import { ChallengeRules } from "@/features/type-challenge/components/ChallengeRules";
+import { GLOBAL_CHALLENGE_RULES } from "@/features/type-challenge/challengeRules";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { LoadingState, ErrorState } from "@/components/ui/QueryState";
 
@@ -50,7 +52,9 @@ export default function TypeChallengePage() {
         description="한 가지 타입으로만 체육관을 격파하는 챌린지 시리즈, 여기서 전부 찾아보세요. 타입을 클릭하면 해당 시리즈의 모든 영상을 번호순으로 볼 수 있어요."
       />
 
-      <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <ChallengeRules rules={GLOBAL_CHALLENGE_RULES} className="mt-8" />
+
+      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
         <TypeFilterBar
           search={search}
           onSearchChange={setSearch}

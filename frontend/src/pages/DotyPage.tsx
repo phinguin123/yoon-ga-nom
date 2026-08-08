@@ -32,7 +32,7 @@ export default function DotyPage() {
             Drip of the Year
           </p>
           <h1 className="mt-2 text-[34px] font-bold leading-[1.1] tracking-[-0.02em] text-[#1d1d1f] sm:text-[42px]">
-            레전드 드립 🏆
+            드립 모음집
           </h1>
           <p className="mt-3 max-w-sm text-[15px] leading-relaxed text-[#6e6e73]">
             윤가놈 방송 역사를 관통하는 밈과 명언. 좋아요로 올해의 드립을 뽑아주세요.
